@@ -1,0 +1,303 @@
+[
+    {
+      "id": 1,
+      "company": "Upstox",
+      "role": "AI Engineer",
+      "question": "Your pipeline expects strict JSON, but the LLM returns markdown-wrapped JSON or prose 3% of the time. Parsing fails. How do you guarantee structured output from an LLM?",
+      "answer": "Use native structured-output or JSON-schema/function-calling support where available, validate every response against a schema, and retry invalid outputs with a constrained repair path. Keep temperature low for structured tasks, enforce required fields and types, and add observability for schema failures. For critical workflows, never trust the raw model output: validate before downstream execution."
+    },
+    {
+      "id": 2,
+      "company": "Cisco",
+      "role": "AI Engineer",
+      "question": "Two AI agents need to communicate securely. How would you ensure each agent can authenticate the other and prevent an attacker from impersonating a legitimate agent?",
+      "answer": "Give every agent a unique identity and use mutual authentication such as mTLS or signed service tokens. Authorize each agent with least-privilege permissions, validate audience, issuer, expiry and signatures, and rotate credentials. Encrypt communication in transit, use replay protection and request IDs, and audit agent-to-agent calls. Never rely on the agent's self-declared identity."
+    },
+    {
+      "id": 3,
+      "company": "UiPath",
+      "role": "AI Engineer",
+      "question": "If LangChain can implement loops and conditional workflows, why would you choose LangGraph? What advantages does LangGraph provide for building complex agent workflows?",
+      "answer": "For complex agents I would prefer an explicit stateful graph. LangGraph models nodes, transitions, shared state, checkpoints and conditional execution directly, making loops, retries, human approval and recovery easier to reason about. It is especially useful when workflows are long-running or need persistence and resumability. LangChain can still provide the models, tools and retrieval components inside those nodes."
+    },
+    {
+      "id": 4,
+      "company": "LinkedIn",
+      "role": "AI Engineer",
+      "question": "A user updates their LinkedIn profile with new skills. How would you design an AI system that identifies relevant job opportunities and ranks them based on the user's experience and career goals?",
+      "answer": "Build a two-stage recommender: candidate retrieval followed by ranking. Represent the user's skills, experience, preferences and career goals as structured features plus embeddings, retrieve jobs using semantic and lexical search, then rank candidates using a learning-to-rank model. Incorporate skill match, seniority, location, compensation and career goals, while avoiding sensitive or protected attributes. Continuously evaluate relevance using clicks, applications and qualified outcomes, with exploration to avoid filter bubbles."
+    },
+    {
+      "id": 5,
+      "company": "Meta",
+      "role": "AI/ML Engineer",
+      "question": "How would you design a GenAI system capable of generating 50 million personalized ad copies every day? How would you ensure each copy feels handcrafted and does not appear AI-generated?",
+      "answer": "Use a template-and-generation pipeline rather than one large synchronous generation job. Retrieve advertiser constraints and audience context, generate variants using smaller models where possible, then run policy, brand, factual and quality checks. Use batching, asynchronous queues, caching and model routing for scale. Personalization should come from real user or campaign signals rather than fabricated details, and human review should cover high-risk campaigns. Measure CTR, conversion, policy violations and diversity of generated creatives."
+    },
+    {
+      "id": 6,
+      "company": "Workday",
+      "role": "AI Engineer",
+      "question": "Your agent has 200 internal APIs. Sending all tool descriptions costs $2/request and the model picks the wrong tool 30% of the time. How do you route to the right tool without sending every specification to the model?",
+      "answer": "Introduce hierarchical tool routing. First classify the request into a domain, retrieve only the relevant tool definitions, then let the LLM choose among that small candidate set. Tool metadata can be indexed using embeddings plus structured tags. Validate arguments with schemas before execution and add tool-choice telemetry to retrain the router. This reduces prompt cost and tool confusion while preserving access to the full API catalog."
+    },
+    {
+      "id": 7,
+      "company": "HDFC Bank",
+      "role": "AI Engineer",
+      "question": "Your RAG system answers correctly today. Tomorrow the source document changes, and thousands of cached answers become wrong. How do you invalidate and refresh AI-generated knowledge safely?",
+      "answer": "Version documents and chunks with stable document IDs and content hashes. When a source changes, emit an event that re-chunks and re-embeds the affected content, then invalidate caches whose retrieval set or document version is affected. Cache keys should include relevant knowledge versions, not only the user query. During propagation, use a safe fallback to uncached retrieval and monitor stale-hit rates."
+    },
+    {
+      "id": 8,
+      "company": "Swiggy",
+      "role": "AI Engineer",
+      "question": "It's raining heavily across the city. Your AI predicts a surge in orders 45 minutes before it happens and proactively repositions delivery partners. How would you design this AI prediction system?",
+      "answer": "Build a spatiotemporal forecasting system using historical order demand, weather, time, day, events, restaurant availability and delivery-partner supply. Generate forecasts at city/zone level for the next 45 minutes, quantify uncertainty, and feed them to an optimization layer that repositions partners subject to capacity and fairness constraints. Use real-time streaming features, continuous monitoring and backtesting. Measure forecast error as well as operational outcomes such as delivery time, partner utilization and cancellations."
+    },
+    {
+      "id": 9,
+      "company": "Infosys",
+      "role": "FDE",
+      "question": "Walk me through how the query is transformed, embedded, searched against the vector database, retrieved, and finally used by the LLM to generate an answer.",
+      "answer": "Normalize the query and optionally rewrite it for retrieval. Generate its embedding with the same embedding model used for the corpus, then perform approximate nearest-neighbor search over chunk embeddings, usually with metadata filters. Retrieve top-k candidates, optionally rerank them with a cross-encoder, and assemble the strongest chunks into a bounded context. The LLM then receives the question plus retrieved evidence and generates a grounded response, ideally with citations. The pipeline should log retrieval scores, selected chunks and generation quality for debugging."
+    },
+    {
+      "id": 10,
+      "company": "HCLTech",
+      "role": "AI Engineer",
+      "question": "You enabled prompt caching to cut costs, then a one-word change to the system prompt silently busted the entire cache. How do you structure prompts so caching actually pays off and a tiny edit doesn't invalidate everything?",
+      "answer": "Separate stable prompt prefixes from dynamic content. Keep system instructions, schemas and long reusable context in a stable prefix, and put user-specific or rapidly changing content later. Version intentional prompt changes and understand the provider's cache-key semantics before deploying. Measure cache hit rate, token savings and latency. If a change genuinely needs a new behavior, invalidate deliberately; otherwise avoid unnecessary edits to the cached prefix."
+    },
+    {
+      "id": 11,
+      "company": "Razorpay",
+      "role": "AI Engineer",
+      "question": "A user finds a way to bypass your LLM's safety controls in production. How would you detect the jailbreak, contain the attack, and prevent similar attempts from succeeding?",
+      "answer": "Use layered defenses rather than relying on the system prompt. Detect suspicious inputs and outputs with policy classifiers, anomaly detection and tool-usage monitoring. Restrict model permissions, isolate tools, validate tool arguments and require authorization for sensitive actions. For a detected incident, block or downgrade the request, revoke affected sessions or credentials if necessary, preserve audit logs, and investigate the attack pattern. Add the discovered pattern to adversarial evaluation suites and regression tests before deploying a fix."
+    },
+    {
+      "id": 12,
+      "company": "Goldman Sachs",
+      "role": "AI Engineer",
+      "question": "Your chatbot receives both simple FAQ questions and complex financial-analysis requests. Would you send both requests to the same LLM? If not, how would you design the routing architecture?",
+      "answer": "I would use model routing. A lightweight classifier or router estimates intent, complexity, required tools, risk and expected reasoning depth. Simple FAQs go to a cheaper low-latency model, while complex analysis goes to a stronger model with appropriate financial tools and retrieval. Add confidence thresholds and a fallback model for uncertain cases. Evaluate routing accuracy, cost, latency and downstream answer quality rather than optimizing only model accuracy."
+    },
+    {
+      "id": 13,
+      "company": "Accenture",
+      "role": "AI Engineer",
+      "question": "Our client is a bank. They want to run this AI on their private servers with zero internet access. How do you build an AI that doesn't need the cloud?",
+      "answer": "Deploy the full inference stack on-premises: an appropriately sized open-weight model, local inference servers, embeddings, vector storage, databases and application services. Package dependencies into controlled containers or VMs and provide internal model and document update pipelines through approved offline transfer mechanisms. Enforce network isolation, encryption, access control, secrets management and audit logging. Benchmark quantization and GPU capacity to meet latency and throughput targets without external APIs."
+    },
+    {
+      "id": 14,
+      "company": "LinkedIn",
+      "role": "AI Engineer",
+      "question": "A user updates their LinkedIn profile with new skills. How would you design an AI system that identifies relevant job opportunities and ranks them based on the user's experience and career goals?",
+      "answer": "I would use profile understanding, job retrieval and ranking as separate stages. Extract normalized skills, seniority, experience and goals from the profile, retrieve a broad set of matching jobs using hybrid search, then rank them with a learned ranking model using skill fit, experience fit, preferences and career goals. Keep protected attributes out of ranking, provide explanations for recommendations, and evaluate both relevance and downstream application quality."
+    },
+    {
+      "id": 15,
+      "company": "Swiggy",
+      "role": "AI Engineer",
+      "question": "Imagine your app sends too many requests to an AI service in a short time. The AI provider starts rejecting some of those requests. How would you build a system that spreads out the requests safely?",
+      "answer": "Put a durable queue between producers and the AI provider. Use token-bucket or leaky-bucket rate limiting, concurrency limits, exponential backoff with jitter, retries only for retryable errors, and a dead-letter queue for persistent failures. Add priority queues so critical requests are handled first. Track provider rate-limit headers, queue depth, latency and rejection rates, and use circuit breakers to prevent overload."
+    },
+    {
+      "id": 16,
+      "company": "Haptik",
+      "role": "AI Engineer",
+      "question": "An AI chatbot receives millions of requests every day. Simple questions can use a small LLM, while complex requests require a more powerful model. How would you design an AI routing system that automatically selects the right LLM for each request?",
+      "answer": "Create a lightweight router that estimates query intent, complexity, context size, tool requirements and risk. Route simple high-volume requests to a small model and difficult or high-value requests to stronger models. Use confidence thresholds and fallback routing for ambiguous cases. Optimize the router against a joint objective of quality, latency and cost, and continuously evaluate routing decisions using production feedback."
+    },
+    {
+      "id": 17,
+      "company": "Meta",
+      "role": "AI/ML Engineer",
+      "question": "Instagram has millions of posts uploaded every minute. How would you design an AI system that predicts which posts a particular user is most likely to engage with and ranks their feed accordingly?",
+      "answer": "Use a multi-stage recommendation system. Generate candidates from followed accounts, similar users, content embeddings and recent interactions, then use a ranking model with user, content and context features. Predict multiple outcomes such as watch time, likes, comments, shares and negative feedback, and combine them with product objectives. Apply diversity, freshness, safety and creator constraints before final ranking. Use online experiments and monitor long-term satisfaction, not only immediate engagement."
+    },
+    {
+      "id": 18,
+      "company": "Perplexity",
+      "role": "AI Engineer",
+      "question": "Imagine you're running a RAG pipeline that pulls from web search, a vector database, and various tools. Users are complaining that certain queries either get off-topic answers or a flat \"I don't know.\" Walk me through your debugging process.",
+      "answer": "Trace the entire request end to end. First classify failures as retrieval, tool selection, context construction, generation or policy issues. Inspect query rewriting, search results, vector similarity, metadata filters, reranking and whether the right evidence reaches the prompt. For \"I don't know,\" check retrieval recall and confidence thresholds; for off-topic answers, inspect irrelevant chunks and prompt assembly. Build a labeled evaluation set, measure retrieval recall and answer faithfulness separately, then fix and regression-test each stage."
+    },
+    {
+      "id": 19,
+      "company": "Razorpay",
+      "role": "AI Agent Engineer",
+      "question": "Your AI agent can spend money using company credit cards to complete tasks. One prompt injection triggers a $50,000 purchase of unnecessary services. How do you design financial guardrails for autonomous agents?",
+      "answer": "Treat financial actions as privileged operations. Give the agent a constrained payment tool rather than raw card access, enforce spend limits, merchant allowlists, transaction policies and per-user budgets outside the model. Require human approval above thresholds or for unusual merchants, use idempotency keys, and provide a kill switch. Validate the final action against the original user intent, detect prompt injection, and maintain immutable audit logs. The model should never be the final authority for authorization."
+    },
+    {
+      "id": 20,
+      "company": "BigBasket",
+      "role": "AI Engineer",
+      "question": "A user asks a question that requires information from 50 documents. Sending all 50 exceeds context limits. How do you compress information without losing critical facts?",
+      "answer": "Use hierarchical retrieval and summarization. First retrieve relevant chunks from all candidate documents, rerank them, and group evidence by document or topic. Summarize only the relevant portions into structured intermediate representations while preserving citations and key entities, numbers and constraints. Then perform a second-stage synthesis over those compact evidence units. For critical facts, keep the original supporting chunks available for verification rather than relying entirely on lossy summaries."
+    },
+    {
+      "id": 21,
+      "company": "Apple",
+      "role": "AI/ML Engineer",
+      "question": "How would you design an AI assistant that can read a user's messages, calendar, and emails to prepare them for a meeting? How would you make the assistant automatically become silent when the phone is handed to another person?",
+      "answer": "Use permissioned data connectors to retrieve only meeting-relevant messages, emails and calendar entries, then summarize them into a private meeting brief. Process sensitive data on-device where practical and enforce per-source permissions. For handoff detection, use device-level signals such as user authentication state, proximity or a secure handoff mode rather than asking the LLM to infer identity from conversation. When the device is handed off, immediately suppress private notifications and context access."
+    },
+    {
+      "id": 22,
+      "company": "CRED",
+      "role": "AI/ML Engineer",
+      "question": "A payment platform processes millions of transactions every minute. How would you design an AI system that detects potentially fraudulent transactions in real time while minimizing false positives?",
+      "answer": "Use a low-latency fraud scoring service with streaming features such as transaction amount, merchant, device, location, velocity and historical behavior. Combine supervised models with rules and, where useful, anomaly or graph-based models. Optimize for precision at the operational review threshold rather than raw accuracy, because fraud is highly imbalanced. Use tiered actions—approve, step-up authentication, review or block—and continuously retrain from confirmed fraud and legitimate outcomes while monitoring drift."
+    },
+    {
+      "id": 23,
+      "company": "ICICI Bank",
+      "role": "AI Engineer",
+      "question": "A policy document was updated this morning, but the system still serves the old answer—the embedding wasn't refreshed and a cached response is stale. How do you design index and cache invalidation so updated documents don't keep serving yesterday's answer?",
+      "answer": "Use event-driven document versioning. When a document changes, compute a new content hash/version, reprocess its chunks and embeddings, and atomically publish the new index version. Cache keys should include document or knowledge-base versions, and affected response caches should be invalidated using document-to-answer dependency tracking. During updates, bypass stale caches or serve only entries whose dependency versions match the active index. Monitor stale responses and propagation latency."
+    },
+    {
+      "id": 24,
+      "company": "Perplexity",
+      "role": "AI Engineer",
+      "question": "Your AI app suddenly gets hit by 1,000 concurrent users. None of their requests are served from the cache—every single one is a cold miss. What would you do to handle this load without breaking your system or budget?",
+      "answer": "First prevent a cache stampede with request coalescing: identical requests share one in-flight computation. Add TTL jitter, prewarming for predictable hot queries, distributed rate limiting and bounded concurrency. Put requests behind a queue and autoscale stateless workers. Cache retrieval results or deterministic intermediate computations where safe, and use model routing or graceful degradation when capacity is exceeded. Monitor queue depth, cache hit rate, provider limits, latency and cost."
+    },
+    {
+      "id": 25,
+      "company": "Amazon",
+      "role": "AI/ML Engineer",
+      "question": "A user tells an AI assistant, \"Alexa, you know what I want for dinner.\" How would you design a Voice AI system that uses conversation history, preferences, location, time, and context to infer the user's intent?",
+      "answer": "Build a voice pipeline with speech recognition, context resolution, intent inference and action generation. Convert the utterance into a structured intent and retrieve only relevant memory such as dietary preferences, recent meals, location and time. Rank candidate interpretations and ask a clarification question if confidence is low. Keep long-term memory permissioned and scoped, and separate the model's reasoning from actions such as ordering food. Evaluate both intent accuracy and successful task completion."
+    },
+    {
+      "id": 26,
+      "company": "Netflix",
+      "role": "AI Engineer",
+      "question": "A Netflix user watches a movie and says, \"Show me something like this, but more exciting.\" How would you design a GenAI recommendation system that understands the user's intent and generates personalized recommendations?",
+      "answer": "Interpret \"like this\" from the current movie and \"more exciting\" as a preference transformation rather than a generic similarity query. Retrieve candidates using collaborative and content-based signals, then rerank them using the user's history and the inferred excitement preference. A GenAI layer can explain or refine the recommendation request, but the candidate set should come from the recommender system and catalog. Apply availability, diversity and safety constraints before presenting results."
+    },
+    {
+      "id": 27,
+      "company": "AI Agent / LLM Routing",
+      "role": "AI Engineer",
+      "question": "You're building a Python-based AI agent that handles different query types—coding, content writing, summarization, and general Q&A. How would you design a routing system that analyzes the query and sends it to the most suitable LLM?",
+      "answer": "Use a lightweight intent and complexity router. Classify the request into coding, writing, summarization, Q&A or mixed intent, then consider context size, required reasoning and latency/cost constraints. Route to specialized or appropriately sized models, with a stronger fallback for uncertain cases. Keep routing independent from the final model response and measure whether each routing decision improves quality per dollar and latency."
+    },
+    {
+      "id": 28,
+      "company": "Amazon",
+      "role": "AI/ML Engineer",
+      "question": "A reader starts losing interest halfway through a book. Design a GenAI system that notices it and changes the next chapter to make it more interesting.",
+      "answer": "First define what \"losing interest\" means using explicit or behavioral signals such as reading pauses, abandonment, rewinds or optional feedback, while respecting privacy. Maintain a structured representation of the reader's preferences and story state. Before generating the next chapter, infer a controlled change in pacing, stakes or style while preserving characters, plot constraints and continuity. Generate multiple candidates, run consistency and safety checks, and select one based on predicted engagement without manipulating the user aggressively."
+    },
+    {
+      "id": 29,
+      "company": "Microsoft",
+      "role": "AI Engineer",
+      "question": "Two AI agents use the exact same model and tools, but one works way better than the other. The prompts look almost the same. What could be causing the difference?",
+      "answer": "The difference can come from much more than the visible prompt. Compare system and developer instructions, hidden context, conversation history, tool schemas, tool results, retrieval quality, model parameters, sampling, token limits, state management and orchestration logic. Also compare the agent's planning strategy and error recovery. I would trace both agents step by step and run controlled A/B tests to isolate each variable rather than assuming the prompt is the only difference."
+    },
+    {
+      "id": 30,
+      "company": "Zerodha",
+      "role": "AI Engineer",
+      "question": "You split your documents into small pieces and turned them into embeddings. Even after doing this, your AI still gives wrong answers. What could have gone wrong in how you split the documents?",
+      "answer": "The chunks may be too small to preserve context or too large to retrieve precisely. Naive character or token splitting can separate headings, tables, definitions and their supporting content. I would use structure-aware chunking, sensible overlap and metadata such as document, section and page. Evaluate chunking with retrieval recall and inspect failure cases. For tables and complex documents, preserve their logical structure instead of flattening them blindly."
+    },
+    {
+      "id": 31,
+      "company": "Infosys",
+      "role": "AI Engineer",
+      "question": "Your chatbot takes 10 seconds to reply because you re-send the entire 50-page manual with every single prompt. It's too slow and expensive. How do you fix it?",
+      "answer": "Move from full-document prompting to retrieval. Chunk and embed the manual once, store the embeddings with metadata, and retrieve only the relevant sections for each query. Add reranking if needed, and keep the prompt limited to the highest-value evidence. Prompt caching can further reduce repeated prefix costs, while conversation memory should retain only useful state. Measure latency, token usage, retrieval quality and answer faithfulness after the change."
+    },
+    {
+      "id": 32,
+      "company": "Salesforce",
+      "role": "AI Engineer",
+      "question": "Your RAG application has grown from 1,000 documents to 10 million documents. As the data grows, document retrieval becomes slower. How would you redesign the system so that users still get fast and relevant search results?",
+      "answer": "Use scalable approximate nearest-neighbor indexing with sharding and metadata partitioning. Apply query-time filters before vector search where possible, use hybrid lexical plus vector retrieval, and retrieve a moderate candidate set followed by reranking. Separate hot and cold data, maintain indexes incrementally, and horizontally scale retrieval services. Monitor recall, p95/p99 latency and index freshness so scaling does not silently reduce relevance."
+    },
+    {
+      "id": 33,
+      "company": "HDFC Bank",
+      "role": "RAG Engineer",
+      "question": "Your RAG system is accurate now, but once the source document is updated tomorrow, thousands of cached answers become outdated. How would you handle safe invalidation and refresh of this knowledge?",
+      "answer": "Track document versions and the dependency between generated answers and retrieved document versions. When a document changes, publish an event, re-index the changed content, and invalidate answers dependent on the old version. Include knowledge-version information in cache keys so old entries cannot match new retrieval state. During asynchronous refresh, prefer fresh retrieval over stale cache entries for affected documents."
+    },
+    {
+      "id": 34,
+      "company": "Accenture",
+      "role": "AI Engineer",
+      "question": "Your organization already pays for ChatGPT, GitHub Copilot, and other AI coding tools. As an AI engineer, what additional value would you bring that these tools cannot provide?",
+      "answer": "The value is in engineering the system around the models. I would identify business use cases, integrate proprietary data and systems, build reliable RAG and agent workflows, enforce security and governance, evaluate models, monitor production quality and optimize cost and latency. Generic coding assistants provide capabilities; an AI engineer turns those capabilities into a reliable, measurable and organization-specific product."
+    },
+    {
+      "id": 35,
+      "company": "Spotify",
+      "role": "AI/ML Engineer",
+      "question": "A user tells Spotify, \"Play something relaxing for my evening commute.\" How would you design an AI system that understands the request and creates a personalized playlist based on mood, history, and context?",
+      "answer": "Parse the request into structured preferences such as mood, activity and time of day. Combine those signals with listening history, skips, likes, recent sessions and contextual information such as commute duration. Retrieve candidate tracks using collaborative and content-based models, then rank them for relaxation and personal fit while adding diversity. The LLM can interpret natural language and explain the playlist, while the recommender system remains responsible for candidate selection."
+    },
+    {
+      "id": 36,
+      "company": "Google",
+      "role": "AI/ML Engineer",
+      "question": "A user asks, \"Find me the fastest route to the airport, but avoid tolls and roads with heavy traffic.\" How would you design an AI system that understands the constraints, combines real-time traffic data with route optimization, and generates an accurate explanation?",
+      "answer": "Use the LLM to convert the natural-language request into structured constraints such as destination, minimize travel time, avoid tolls and penalize congested roads. Pass those constraints to a deterministic routing engine that uses the current road graph and real-time traffic. Compare feasible routes using the objective function and return the selected route plus structured reasons. The LLM should explain the routing engine's result rather than inventing traffic or route facts."
+    },
+    {
+      "id": 37,
+      "company": "ThoughtWorks",
+      "role": "AI Engineer",
+      "question": "Your AI coding assistant generates secure code 99% of the time. The remaining 1% creates critical vulnerabilities. How do you validate AI-generated code before deployment?",
+      "answer": "Treat generated code like untrusted code. Run compilation and unit tests, static analysis, dependency and secret scanning, SAST and security linters, and where appropriate dynamic or sandboxed tests. Add AI-specific checks for insecure patterns and compare against secure coding policies. Require human review for high-risk changes and enforce CI/CD gates so validation happens before deployment. Track vulnerabilities found in production and feed them into regression evaluations."
+    },
+    {
+      "id": 38,
+      "company": "Meta",
+      "role": "AI/ML Engineer",
+      "question": "A user sends a voice message in Telugu, \"Remind me to call my manager tomorrow morning, and tell me what we discussed last time.\" How would you design a multilingual AI assistant that understands the message, retrieves relevant conversation history, creates a reminder, and handles privacy securely?",
+      "answer": "Use multilingual speech recognition to transcribe the Telugu message, language-aware intent extraction to identify the reminder and the request for prior discussion, and entity/time normalization for \"tomorrow morning.\" Retrieve only authorized conversation history relevant to the manager topic. Create the reminder through a secure calendar/reminder tool after validating the user's permissions. Keep private memory isolated, encrypt sensitive data, minimize retained content, and ask for clarification when time or identity resolution is ambiguous."
+    },
+    {
+      "id": 39,
+      "company": "Capgemini",
+      "role": "FDE",
+      "question": "An AI support agent handles 500,000 conversations daily. Management wants root-cause analysis of recurring issues. How do you build intelligence on top of AI conversation logs?",
+      "answer": "Build a privacy-aware analytics pipeline that cleans, redacts and structures conversation logs. Generate embeddings and structured features for intents, entities, outcomes, sentiment and failure categories. Cluster recurring issues, summarize representative conversations, and correlate clusters with product versions, workflows and operational metrics. Use human-labeled samples to validate clusters and root causes. Provide dashboards and alerts while enforcing retention, access control and anonymization policies."
+    },
+    {
+      "id": 40,
+      "company": "Lenskart",
+      "role": "AI/ML Engineer",
+      "question": "You need the model to stick to a strict persona across a 30-message conversation, but it slowly drifts back to neutral. How do you maintain persona and tone over long sessions?",
+      "answer": "Do not rely only on a one-time system prompt. Store persona as structured state and periodically reinforce a compact persona summary in the active context. Use a conversation-state manager that preserves tone rules across summarization and truncation, and add an output validator for persona violations. Keep the persona instructions stable and separate from volatile conversation content. Evaluate persona consistency across long-session test suites and regenerate summaries when drift is detected."
+    },
+    {
+      "id": 41,
+      "company": "ICICI Bank",
+      "role": "AI Engineer",
+      "question": "A customer asks, \"Why was my credit card charged ₹2,500 yesterday?\" How would you design an AI banking assistant that retrieves transaction data, understands the customer's question, explains the charge, and securely handles sensitive financial information?",
+      "answer": "I would design this as a secure tool-augmented AI assistant where the LLM never directly accesses the banking database. First authenticate and authorize the customer. Then extract the intent, amount and date and call a controlled transaction API. The backend enforces authorization and returns only the required transaction fields. The LLM explains the retrieved transaction using trusted data, with sensitive values masked. Encrypt data, use least privilege, audit tool calls and never expose PINs, CVVs or raw card numbers. If the transaction cannot be confidently identified or appears fraudulent, ask for clarification or route to a secure dispute workflow."
+    },
+    {
+      "id": 42,
+      "company": "Yellow.ai",
+      "role": "AI Engineer",
+      "question": "Your customer support agent receives conflicting information from multiple knowledge sources. Each source appears trustworthy. How do you resolve conflicting evidence before generating an answer?",
+      "answer": "I would introduce an evidence-resolution layer before generation. Retrieve relevant evidence from all sources and attach metadata such as source authority, timestamp, version and relevance. Establish deterministic precedence rules such as current official policy over older FAQs. Detect contradictions explicitly rather than letting the LLM blend conflicting claims. If the conflict cannot be safely resolved, abstain or escalate. Only then provide the resolved evidence to the LLM and require a grounded response with citations."
+    },
+    {
+      "id": 43,
+      "company": "Delhivery",
+      "role": "AI Agent Engineer",
+      "question": "Step 3 of a 6-step plan fails, but the agent charges ahead with steps 4–6 as if nothing went wrong. How do you build replanning so agents recover from mid-task failures instead of compounding them?",
+      "answer": "I would make the agent a stateful workflow with explicit checkpoints, post-condition validation and replanning. After every action, validate whether the expected state was reached. If Step 3 fails, mark it failed and block dependent steps rather than continuing blindly. Classify the failure as transient, recoverable, invalid-input or fatal; retry transient errors with backoff and replan recoverable failures from the last known good state. Persist checkpoints so the workflow can resume after crashes, use idempotency for side-effecting actions, and require human approval for high-risk or ambiguous recovery."
+    }
+  ]
