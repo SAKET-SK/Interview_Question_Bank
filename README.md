@@ -4,7 +4,7 @@ A simple, no-framework app for browsing scenario-based interview questions.
 Each question is its own tab; click it to open the answer in a popup.
 
 ## Folder structure
-
+```
 interview-qa-tracker/
 ├── index.html          # page structure
 ├── css/
@@ -14,11 +14,11 @@ interview-qa-tracker/
 ├── data/
 │   └── questions.json  # your Q&A data — edit this by hand
 └── README.md
-
+```
 ## Editing your data
 
 Open `data/questions.json` in any text editor and add entries in this format:
-
+```
 {
   "id": 3,
   "company": "Amazon",
@@ -26,7 +26,7 @@ Open `data/questions.json` in any text editor and add entries in this format:
   "question": "Tell me about a time you disagreed with a decision.",
   "answer": "Your full answer goes here."
 }
-
+```
 - `id` must be unique across all entries.
 - Keep it as one big array [ {...}, {...}, {...} ].
 
