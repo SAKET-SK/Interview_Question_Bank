@@ -39,6 +39,18 @@ not specific to this app). Run a tiny local server instead:
 Python: python3 -m http.server 8000, then open http://localhost:8000
 Node: npx serve .
 
+## Screenshots of UI
+
+Landing page:
+
+<img width="1796" height="837" alt="image" src="https://github.com/user-attachments/assets/81b40a9b-779c-4bd9-b6cf-e1bd66beaea0" />
+
+Clicking any question tab:
+
+<img width="1817" height="827" alt="image" src="https://github.com/user-attachments/assets/65905955-0ce0-4537-aa4b-a60724d316f8" />
+
+
+
 ## Contributing
 
 Have a scenario-based interview question to add? Contributions are welcome!
