@@ -1,11 +1,11 @@
 // ---- Config ----
 const JSON_FILE_PATH = 'data/questions.json';
-const ADDED_KEY = 'qa_added_questions';   // questions added via the frontend form (this browser only)
+const ADDED_KEY = 'qa_added_questions';   // legacy — no longer written to, kept for backward compatibility
 const DELETED_KEY = 'qa_deleted_ids';     // ids (from questions.json) the user removed via the frontend
 
 // ---- State ----
 let baseQuestions = [];    // loaded from questions.json (read-only from the frontend)
-let addedQuestions = [];   // loaded from localStorage
+let addedQuestions = [];   // loaded from localStorage (legacy, will be empty on fresh browsers)
 let deletedIds = [];       // ids from questions.json that the user hid
 let questions = [];        // combined, rendered list
 let activeQuestion = null;
@@ -123,7 +123,7 @@ document.getElementById('searchInput').addEventListener('input', (e) => {
   render(e.target.value);
 });
 
-// ---- Add question ----
+// ---- Contribute modal (static instructions, no form) ----
 document.getElementById('openAddBtn').addEventListener('click', () => {
   document.getElementById('addOverlay').classList.add('open');
 });
@@ -132,32 +132,6 @@ document.getElementById('closeAddModal').addEventListener('click', () => {
 });
 document.getElementById('addOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'addOverlay') document.getElementById('addOverlay').classList.remove('open');
-});
-
-document.getElementById('saveNewBtn').addEventListener('click', () => {
-  const company = document.getElementById('newCompany').value.trim();
-  const role = document.getElementById('newRole').value.trim();
-  const question = document.getElementById('newQuestion').value.trim();
-  const answer = document.getElementById('newAnswer').value.trim();
-
-  if(!question || !answer){
-    alert('Please fill in at least the question and answer.');
-    return;
-  }
-
-  const allIds = questions.map(q => q.id);
-  const newId = allIds.length ? Math.max(...allIds) + 1 : 1;
-
-  addedQuestions.push({ id: newId, company, role, question, answer });
-  persistAdded();
-  rebuildCombined();
-
-  document.getElementById('newCompany').value = '';
-  document.getElementById('newRole').value = '';
-  document.getElementById('newQuestion').value = '';
-  document.getElementById('newAnswer').value = '';
-  document.getElementById('addOverlay').classList.remove('open');
-  render(document.getElementById('searchInput').value);
 });
 
 // ---- Escape key closes any open modal ----
