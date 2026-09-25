@@ -348,5 +348,12 @@
       "role": "FDE",
       "question": "Your RAG worked perfectly in production. 3 months later, it's retrieving irrelevant results. You didn't change the code. What went wrong?",
       "answer": "I wouldn't assume the code is the problem because RAG quality can degrade even when the application remains unchanged. I'd first compare the current corpus, embeddings and vector index with the state from when the system performed well. Then I'd evaluate retrieval separately from generation using a fixed evaluation dataset and metrics such as Recall@K, Precision@K and MRR. If the retrieved documents are irrelevant, I'd investigate corpus changes, embedding drift, chunking, metadata filters, index health and query-distribution drift. If retrieval is still relevant but answers have degraded, I'd investigate the prompt, context construction and model behavior. Finally, I'd add continuous RAG evaluation and monitoring so changes in retrieval quality are detected before users notice them."
-    }
+    },
+    {
+      "id": 51,
+      "company": "CRED",
+      "role": "AI Engineer",
+      "question": "Two people are using ChatGPT at the same time. Neither shares an account. User A suddenly sees User B's conversation history in their sidebar. How does that happen?",
+      "answer": "I'd treat this as a user-isolation failure rather than an LLM problem. The likely causes include a session or authentication mix-up, a cache-key collision, incorrect shared session state, or a database query that doesn't enforce ownership. I'd trace the request end-to-end and verify that the authenticated user ID is consistently propagated from the gateway through the conversation service, cache and database. Every conversation read should enforce server-side authorization such that the authenticated user must own the requested conversation. Cache keys should also be scoped by tenant or user ID. I'd add row-level access controls, audit logs and automated cross-user isolation tests to ensure one user's conversation can never be returned to another user. The UI should never be considered a security boundary."
+}
   ]
