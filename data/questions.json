@@ -362,5 +362,12 @@
       "role": "Applied AI Engineer",
       "question": "You're building RAG for financial PDFs. Missing a single number from search can cost millions. What is the best RAG search method you can use here?",
       "answer": "For high-stakes financial PDFs, I would use hybrid retrieval rather than relying solely on vector search. I would combine BM25 or keyword search for exact numbers, financial years, company names and table labels with vector search for semantic similarity. I would then merge the candidates and apply a reranker to select the most relevant evidence. During ingestion, I would use table-aware PDF parsing and preserve metadata such as document, page, section and financial year. For financial queries, I would also retrieve the surrounding table context, validate numerical consistency where possible, and return citations to the source page or table. This combination provides semantic understanding while protecting exact numerical retrieval, which is critical when a single incorrect number can materially affect the answer."
+    },
+    {
+      "id": 53,
+      "company": "HDFC Bank",
+      "role": "AI Engineer",
+      "question": "Your RAG system answers correctly today. Tomorrow the source document changes. Thousands of cached answers become wrong. How do you invalidate and refresh AI-generated knowledge safely?",
+      "answer": "I would use versioned knowledge with event-driven cache invalidation. Every source document would have a document ID and version or content hash, and cached answers would be associated with the source versions used to generate them. When a document changes, an ingestion pipeline detects the change, re-chunks and re-embeds the affected content, updates the indexes, and publishes an invalidation event. Any cache entries dependent on the old document version are then invalidated rather than clearing the entire cache. The cache key can include the query and knowledge version, so a new document version naturally produces a new cache entry. I would also use TTL as a secondary safety mechanism, atomic index/version switching to avoid serving inconsistent data, and audit metadata recording which document version was used for each answer."
     }
   ]
