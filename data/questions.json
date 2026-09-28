@@ -355,5 +355,12 @@
       "role": "AI Engineer",
       "question": "Two people are using ChatGPT at the same time. Neither shares an account. User A suddenly sees User B's conversation history in their sidebar. How does that happen?",
       "answer": "I'd treat this as a user-isolation failure rather than an LLM problem. The likely causes include a session or authentication mix-up, a cache-key collision, incorrect shared session state, or a database query that doesn't enforce ownership. I'd trace the request end-to-end and verify that the authenticated user ID is consistently propagated from the gateway through the conversation service, cache and database. Every conversation read should enforce server-side authorization such that the authenticated user must own the requested conversation. Cache keys should also be scoped by tenant or user ID. I'd add row-level access controls, audit logs and automated cross-user isolation tests to ensure one user's conversation can never be returned to another user. The UI should never be considered a security boundary."
-}
+    },
+    {
+      "id": 52,
+      "company": "Zerodha",
+      "role": "Applied AI Engineer",
+      "question": "You're building RAG for financial PDFs. Missing a single number from search can cost millions. What is the best RAG search method you can use here?",
+      "answer": "For high-stakes financial PDFs, I would use hybrid retrieval rather than relying solely on vector search. I would combine BM25 or keyword search for exact numbers, financial years, company names and table labels with vector search for semantic similarity. I would then merge the candidates and apply a reranker to select the most relevant evidence. During ingestion, I would use table-aware PDF parsing and preserve metadata such as document, page, section and financial year. For financial queries, I would also retrieve the surrounding table context, validate numerical consistency where possible, and return citations to the source page or table. This combination provides semantic understanding while protecting exact numerical retrieval, which is critical when a single incorrect number can materially affect the answer."
+    }
   ]
