@@ -467,5 +467,19 @@
       "role": "AI Engineer",
       "question": "Your AI agent is correct 99.9% of the time. The remaining 0.1% can send money, delete data, email customers, or trigger legal issues. How do you design systems where AI is trusted enough to act, but never trusted enough to cause irreversible damage?",
       "answer": "I would design for bounded autonomy rather than trying to make the AI 100% reliable. Every action should be classified by risk: low-risk actions can execute autonomously, medium-risk actions require approval, and high-risk or irreversible actions require explicit human authorization. The agent should use least-privilege tools, while a deterministic policy engine—not the LLM—enforces permissions, limits, and business rules. I would also implement pre- and post-action validation, rate limits, idempotency, audit logging, and reversible operations such as soft deletes, transactions, and rollback mechanisms wherever possible. The LLM can recommend and orchestrate actions, but it should never have unrestricted authority over irreversible side effects. The goal is to make failures bounded, detectable, auditable, and recoverable."
+    },
+    {
+      "id": 68,
+      "company": "Infosys",
+      "role": "AI/ML Engineer",
+      "question": "Your RAG retrieves top-5 chunks, but the correct answer lives in chunk #12. Increasing top-K to 20 blows the context window. How do you make sure the right chunk reaches the LLM without flooding the context?",
+      "answer": "I would use a multi-stage retrieval pipeline rather than simply increasing top-K. First, retrieve a broader candidate set using hybrid search that combines dense vector retrieval with BM25 or keyword search. Then use a cross-encoder or other reranker to score those candidates against the query and select the most relevant chunks. I would also apply MMR and deduplication to reduce redundant chunks, and use query expansion or multi-query retrieval when the original query may have poor recall. Finally, I would use context compression to extract only the relevant portions before sending a small number of high-quality chunks to the LLM. The pipeline would be: Query → Hybrid Retrieval → Reranking → MMR/Deduplication → Context Compression → Final Top-K → LLM. This improves recall without unnecessarily increasing the LLM's context size."
+    },
+    {
+      "id": 69,
+      "company": "Razorpay",
+      "role": "AI Engineer",
+      "question": "Your RAG system indexes product documentation updated 20+ times a day. Users get outdated answers within hours. How do you keep the vector index fresh without re-embedding the entire corpus every time?",
+      "answer": "I would use an incremental, event-driven indexing pipeline instead of rebuilding the entire vector index. First, detect document changes using content hashes, timestamps, or version IDs. Then identify only the added, modified, or deleted documents and re-chunk and re-embed only the affected chunks. Each chunk should have a stable ID such as document_id plus chunk_id, allowing the vector database to upsert updated embeddings and delete stale chunks. I would store metadata such as document version and updated_at to prevent retrieval of outdated content. For frequent updates, I would batch or debounce changes to avoid triggering an embedding job for every individual update. If strong consistency is required, I would use versioned or blue-green indexes and switch to the new validated index once indexing completes. This keeps the RAG system fresh while significantly reducing embedding cost, indexing latency, and unnecessary computation."
     }
   ]
