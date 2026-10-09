@@ -495,5 +495,12 @@
       "role": "Forward Deployed Engineer",
       "question": "A customer uploads a 5GB knowledge base. Embedding everything would take days. How do you design real-time onboarding for massive enterprise datasets?",
       "answer": "I would separate immediate availability from complete indexing by building a streaming, prioritized ingestion pipeline. The uploaded data would first go to object storage, followed by distributed parsing and chunking. Chunks would then be placed into a priority queue, with important, recent, or frequently accessed content embedded first. Multiple embedding workers would process chunks in parallel using batching, and the vector index would be updated incrementally. This allows users to query the portions that are already indexed while ingestion continues in the background. I would also maintain document and chunk versions to avoid duplicate processing and track ingestion status, failures, queue depth, embedding throughput, and indexing latency. For content that has not yet been vectorized, I could maintain a temporary keyword/BM25 index so it remains searchable. The overall architecture would be: Upload → Object Storage → Distributed Parsing/Chunking → Priority Queue → Parallel Embedding Workers → Incremental Vector Index. The key idea is progressive availability: make the system useful within seconds or minutes rather than blocking the customer until the entire 5GB dataset has been embedded."
-    }
+    },
+    {
+      "id": 72,
+      "company": "Paytm",
+      "role": "AI Engineer",
+      "question": "Your agent's send_email tool accidentally emails 12,000 customers with a test message during a debug session. How do you design agent action safety so destructive actions need approval?",
+      "answer": "I would implement risk-based action authorization outside the LLM. Every tool call would pass through a deterministic policy engine that checks permissions, environment, action risk, and business rules. Low-risk actions could execute automatically, while destructive or high-impact actions, such as bulk emails, payments, or bulk deletions, would require explicit human approval. The approval must be bound to the exact action payload, including recipients, message content, sender, and scope. If any field changes after approval, authorization must be repeated. I would also enforce dry-run mode during debugging, strict separation between staging and production, least-privilege credentials, recipient and rate limits, idempotency, and comprehensive audit logging. The system must block unauthorized actions before invoking the external API. The key principle is that the LLM can propose actions, but a deterministic authorization layer controls whether they execute."
+}
   ]
