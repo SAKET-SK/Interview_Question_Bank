@@ -502,5 +502,12 @@
       "role": "AI Engineer",
       "question": "Your agent's send_email tool accidentally emails 12,000 customers with a test message during a debug session. How do you design agent action safety so destructive actions need approval?",
       "answer": "I would implement risk-based action authorization outside the LLM. Every tool call would pass through a deterministic policy engine that checks permissions, environment, action risk, and business rules. Low-risk actions could execute automatically, while destructive or high-impact actions, such as bulk emails, payments, or bulk deletions, would require explicit human approval. The approval must be bound to the exact action payload, including recipients, message content, sender, and scope. If any field changes after approval, authorization must be repeated. I would also enforce dry-run mode during debugging, strict separation between staging and production, least-privilege credentials, recipient and rate limits, idempotency, and comprehensive audit logging. The system must block unauthorized actions before invoking the external API. The key principle is that the LLM can propose actions, but a deterministic authorization layer controls whether they execute."
-}
+    },
+    {
+      "id": 73,
+      "company": "Zoom",
+      "role": "AI Engineer",
+      "question": "How do you personalize AI-generated meeting summaries for different attendees without changing factual accuracy?",
+      "answer": "I would design a two-stage summarization pipeline. In the first stage, I would transcribe the meeting with speaker labels and timestamps, then extract canonical facts such as decisions, action items, owners, deadlines, and unresolved questions. In the second stage, I would personalize the summary based on each attendee's role, responsibilities, and preferences while grounding every statement in the same canonical meeting representation. For example, an engineering manager would receive blockers and risks, while a developer would receive technical details and assigned tasks. I would enforce structured outputs, preserve source references, and validate critical facts such as names, numbers, deadlines, and ownership against the transcript. Ambiguous information would be flagged rather than invented. Finally, I would evaluate factual consistency, action-item precision and recall, omission rates, and user satisfaction. This ensures that summaries differ in relevance and presentation, but not in the underlying facts."
+    }
   ]
